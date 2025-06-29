@@ -61,7 +61,7 @@ MAX_TRIES = 6
 class HangmanGame:
     def __init__(self, master):
         self.master = master
-        self.master.title("🕴️ Hangman Game with Hints")
+        self.master.title("🕴 Hangman Game with Hints")
         self.master.config(bg="#1e1e1e")
         self.word, self.hint = random.choice(WORDS_WITH_HINTS)
         self.guessed_letters = set()
@@ -73,7 +73,7 @@ class HangmanGame:
         self.setup_ui()
 
     def setup_ui(self):
-        self.title = tk.Label(self.master, text="🕹️ Hangman Game", font=("Consolas", 24, "bold"),
+        self.title = tk.Label(self.master, text="🕹 Hangman Game", font=("Consolas", 24, "bold"),
                               bg="#1e1e1e", fg="white")
         self.title.pack(pady=10)
 
@@ -113,18 +113,18 @@ class HangmanGame:
 
     def draw_hangman(self):
         steps = [
-            lambda: self.canvas.create_oval(110, 40, 150, 80, fill="", outline="white", width=2),
+            lambda: self.canvas.create_oval(110, 40, 150, 80, outline="white", width=2),
             lambda: self.canvas.create_line(130, 80, 130, 150, fill="white", width=2),
             lambda: self.canvas.create_line(130, 100, 100, 130, fill="white", width=2),
             lambda: self.canvas.create_line(130, 100, 160, 130, fill="white", width=2),
             lambda: self.canvas.create_line(130, 150, 100, 190, fill="white", width=2),
             lambda: self.canvas.create_line(130, 150, 160, 190, fill="white", width=2),
         ]
-        if self.tries <= MAX_TRIES:
+        if 1 <= self.tries <= MAX_TRIES:
             steps[self.tries - 1]()
 
     def guess_letter(self, letter):
-        if letter in self.guessed_letters:
+        if letter in self.guessed_letters or self.tries >= MAX_TRIES:
             return
 
         self.guessed_letters.add(letter)
@@ -139,7 +139,6 @@ class HangmanGame:
                 self.result_label.config(text=f"❌ You Lost! Word: {self.word}", fg="red")
                 self.reveal_word()
 
-        # Disable used button
         for widget in self.buttons_frame.winfo_children():
             if widget["text"] == letter:
                 widget["state"] = "disabled"
@@ -175,7 +174,8 @@ def center_window(win, width=600, height=600):
 def main():
     root = tk.Tk()
     center_window(root)
-    HangmanGame(root)
+    game = HangmanGame(root)
     root.mainloop()
 
-main()
+if __name__ == "__main__":
+    main()
